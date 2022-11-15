@@ -6,7 +6,9 @@ class InvoicesController < ApplicationController
 
     def show
         invoice = Invoice.find(params[:id])
-        render json: invoice
+        render json: invoice, methods: [:client_details, :profile_details]
+        # render json: invoice.to_json(:include => {:client, :profile})
+
     end
 
     def edit
@@ -29,11 +31,15 @@ class InvoicesController < ApplicationController
     private
   
     def invoice_params
-        params.require(:invoice).permit(:id, :inv_number, :date_of_issue, :due_date, :job_reference, :description, :quantity, :unit_price, :sum_amount, :tax, :total_amount, :paid_amount, :due_amount, :client_id)
+        params.require(:invoice).permit(:id, :inv_number, :date_of_issue, :due_date, :job_reference, :description, :quantity, :unit_price, :sum_amount, :tax, :total_amount, :paid_amount, :due_amount, :client_id, :profile_id)
     end
 
     def client_params
         params.require(:client).permit(:client_id)
+    end
+
+    def profile_params
+        params.require(:profile).permit(:profile_id)
     end
 
 end
