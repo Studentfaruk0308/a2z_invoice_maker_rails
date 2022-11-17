@@ -2,7 +2,11 @@ class ProfilesController < ApplicationController
 
     def show
         profile = Profile.find(params[:id])
-        render json: profile
+        if profile
+            render json: profile
+           else
+            render status: :bad_request, json: {error: profile.errors.full_messages}
+           end
     end
 
     def create
@@ -10,8 +14,17 @@ class ProfilesController < ApplicationController
         if profile.save
         render json: profile
        else
-        render text: "profile not saved" 
+        render status: :bad_request, json: {error: profile.errors.full_messages}
        end
+    end
+
+    def update
+        profile = Profile.find(params[:id])
+        if profile.update(profile_params)
+            render json: {success: "true"}
+        else
+            render status: :bad_request, json: {error: profile.errors.full_messages}
+        end
     end
 
 

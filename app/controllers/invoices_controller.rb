@@ -1,14 +1,16 @@
 class InvoicesController < ApplicationController
     def index
 		invoices = Invoice.all
-        render json: invoices
+        user = request.headers["Authorization"]
+        filteredInvoices = invoices.select {|i| i.profile_id == user}
+        puts user
+        render json: filteredInvoices
 	end
 
     def show
         invoice = Invoice.find(params[:id])
         render json: invoice, methods: [:client_details, :profile_details]
         # render json: invoice.to_json(:include => {:client, :profile})
-
     end
 
     def edit
