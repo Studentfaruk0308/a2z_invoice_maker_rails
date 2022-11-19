@@ -28,6 +28,14 @@ class InvoicesController < ApplicationController
        end
     end
 
+    def update
+        invoice = Invoice.find(params[:id])
+        if invoice.update(invoice_params)
+            render json: {success: "true"}
+        else
+            render status: :bad_request, json: {error: invoice.errors.full_messages}
+        end
+    end
     
 
     private
