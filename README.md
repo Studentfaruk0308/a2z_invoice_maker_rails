@@ -2,16 +2,6 @@
 
 This application is the backend part of "a2z_invoice_maker" web app.
 
-## Table of Contents
-# Objectives
-# System Requirements
-# How to Setup
-# Usage
-# License
-# Terms & Conditions
-
-
-
 # Objectives
 * a2z_Invoice_Maker is a web application to generate invoices for client from a Company.
 
