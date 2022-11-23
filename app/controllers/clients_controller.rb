@@ -7,10 +7,11 @@ class ClientsController < ApplicationController
 
     def show
         client = Client.find(params[:id])
-    end
-
-    def edit
-        client = Client.find(params[:id])
+        if client
+            render json: client
+        else
+            render status: :bad_request, json: {error: client.errors.full_messages}
+        end
     end
 
     def create
@@ -22,7 +23,14 @@ class ClientsController < ApplicationController
        end
     end
 
-    
+    def update
+        client = Client.find(params[:id])
+        if client.update(client_params)
+            render json: {success: "true"}
+        else
+            render status: :bad_request, json: {error: client.errors.full_messages}
+        end
+    end
 
     private
   

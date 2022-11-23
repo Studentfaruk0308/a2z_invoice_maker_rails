@@ -22,6 +22,34 @@ class InvoicesController < ApplicationController
 
         if invoice.valid?
             invoice.save
+
+            mail = SendGrid::Mail.new
+            mail.from = SendGrid::Email.new(email: 'studentfaruk0308@gmail.com')
+            personalization = SendGrid::Personalization.new
+            personalization.add_to(SendGrid::Email.new(email: invoice.client_details['email']))
+            @json = invoice_params
+            @json['client_details'] = invoice.client_details
+            @json['profile_details'] = invoice.profile_details
+            @json['sum_amount'] = invoice_params['quantity'] * invoice_params['unit_price']
+            @json['total_amount'] = @json['sum_amount'] + (@json['sum_amount']*@json['tax'])/100
+            @json['due_amount'] = @json['total_amount'] - @json['paid_amount']
+            personalization.add_dynamic_template_data(@json)
+            mail.add_personalization(personalization)
+            mail.template_id = 'd-3c3dc6e62cf64f6a9bf6fe84af22ef71'
+            
+            sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+            puts mail.to_json
+            begin
+                response = sg.client.mail._("send").post(request_body: mail.to_json)
+                puts response.status_code
+                puts response.body
+                puts response.parsed_body
+                puts response.headers
+            rescue Exception => e
+                puts e.message
+                puts "ERROR"
+            end
+
             render json: invoice
         else
             render status: :bad_request, json: {error: invoice.errors.full_messages}
@@ -30,7 +58,35 @@ class InvoicesController < ApplicationController
 
     def update
         invoice = Invoice.find(params[:id])
-        if invoice.update(invoice_params)
+
+        if invoice.update(invoice_params) 
+            mail = SendGrid::Mail.new
+            mail.from = SendGrid::Email.new(email: 'studentfaruk0308@gmail.com')
+            personalization = SendGrid::Personalization.new
+            personalization.add_to(SendGrid::Email.new(email: invoice.client_details['email']))
+            @json = invoice_params
+            @json['client_details'] = invoice.client_details
+            @json['profile_details'] = invoice.profile_details
+            @json['sum_amount'] = invoice_params['quantity'] * invoice_params['unit_price']
+            @json['total_amount'] = @json['sum_amount'] + (@json['sum_amount']*@json['tax'])/100
+            @json['due_amount'] = @json['total_amount'] - @json['paid_amount']
+            personalization.add_dynamic_template_data(@json)
+            mail.add_personalization(personalization)
+            mail.template_id = 'd-3c3dc6e62cf64f6a9bf6fe84af22ef71'
+            
+            sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+            puts mail.to_json
+            begin
+                response = sg.client.mail._("send").post(request_body: mail.to_json)
+                puts response.status_code
+                puts response.body
+                puts response.parsed_body
+                puts response.headers
+            rescue Exception => e
+                puts e.message
+                puts "ERROR"
+            end
+
             render json: {success: "true"}
         else
             render status: :bad_request, json: {error: invoice.errors.full_messages}
