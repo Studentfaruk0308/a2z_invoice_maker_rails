@@ -1,4 +1,7 @@
 class InvoicesController < ApplicationController
+    require 'sendgrid-ruby'
+    include SendGrid
+
     def index
 		invoices = Invoice.all
         user = request.headers["Authorization"]
